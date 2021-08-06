@@ -1,0 +1,6 @@
+name,zip,email,morning,afternoon,evening
+May,98177,hello.gloria@gmail.com,TRUE,TRUE,TRUE
+Dawn,98177,hello.gloria@gmail.com,TRUE,TRUE,FALSE
+Sam,98177,hello.gloria@gmail.com,TRUE,TRUE,TRUE
+Jo,98177,hello.gloria@gmail.com,FALSE,TRUE,FALSE
+Sue,98104,hello.gloria@gmail.com,FALSE,TRUE,TRUE

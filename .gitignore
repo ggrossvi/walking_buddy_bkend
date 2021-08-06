@@ -1,0 +1,3 @@
+#to ignore whole directory put slash after
+venv/
+credentials.json

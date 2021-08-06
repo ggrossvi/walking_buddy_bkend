@@ -1,0 +1,13 @@
+find out whether they(other walker in the area who also wants to walk in the evening) are busy(their calendar has an event scheduled during that hour 6-7pm) tommorow at 6pm 
+if they are busy --write me they are busy
+if they are free then book a walking event for that time
+
+code
+
+add 1 day to datetime of today's date 
+call free busy to check for a certain time and datetime
+if they are busy return "they are busy" msg 
+if they are free book an event
+
+
+    
