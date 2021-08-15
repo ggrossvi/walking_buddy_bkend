@@ -10,4 +10,15 @@ if they are busy return "they are busy" msg
 if they are free book an event
 
 
+Next todos
+-how to put the email of the person dynamically in the invitation for google calendar invite.  
+
+-check the time timeZone
+
+Backend
+finish routes
+
+Frontend
+checkboxes
+
     

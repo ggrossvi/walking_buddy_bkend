@@ -4,6 +4,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+
 from google.oauth2.credentials import Credentials
 
 # additional imports
@@ -79,69 +80,77 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
 def next_ten_events():
-        # Call the Calendar API
-        now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
-        print("Getting the upcoming 10 events")
-        # events_result = service.events().list(calendarId='primary', timeMin=now,
-        #                                     maxResults=10, singleEvents=True,
-        #                                     orderBy='startTime').execute()
-        # events = events_result.get('items', [])
+    # Call the Calendar API
+    now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
+    print("Getting the upcoming 10 events")
+    # events_result = service.events().list(calendarId='primary', timeMin=now,
+    #                                     maxResults=10, singleEvents=True,
+    #                                     orderBy='startTime').execute()
+    # events = events_result.get('items', [])
 
-        # if not events:
-        #     print('No upcoming events found.')
-        # for event in events:
-        #     start = event['start'].get('dateTime', event['start'].get('date'))
-        #     print(start, event['summary'])
+    # if not events:
+    #     print('No upcoming events found.')
+    # for event in events:
+    #     start = event['start'].get('dateTime', event['start'].get('date'))
+    #     print(start, event['summary'])
 
 
-def free_or_busy_time():
-        # This event should be returned by freebusy
-        service = check_creds()
-        tz = pytz.timezone("US/Central")
-        today = datetime.date.today()
-        print("1", today.year, today.month, today.day)
-        today += datetime.timedelta(days=1)
+def free_or_busy_time(service):
+    # This event should be returned by freebusy empty busy [] means they are not busy
 
-        print("2", today)
-        print("3", today.year, today.month, today.day)
-        # from datetime import date
-
-        # my_date = date.today()
-        # my_datetime = datetime(my_date.year, my_date.month, my_date.day)
-        # print(my_datetime)
-        # convert our date into a datetime and add the 6 PM hour to it
-        the_datetime = tz.localize(
-            datetime.datetime(today.year, today.month, today.day, 18)
-        )
-        the_datetime2 = tz.localize(
-            datetime.datetime(today.year, today.month, today.day, 19)
-        )
-        print(the_datetime, the_datetime2)
-        body = {
-            "timeMin": the_datetime.isoformat(),
-            "timeMax": the_datetime2.isoformat(),
-            "timeZone": "US/Central",
-            "items": [{"id": "hello.gloria@gmail.com"}],
-        }
-
-        eventsResult = service.freebusy().query(body=body).execute()
-        import json
-        print("eventsResult:",json.dumps(eventsResult))
-
-        cal_dict = eventsResult[u'calendars']
-        for cal_name in cal_dict:
-            print(cal_name, cal_dict[cal_name])
-        if  eventsResult["calendars"]["hello.gloria@gmail.com"]=="busy":
-            return "busy"
-    
-# Add event
-def add_event():
     tz = pytz.timezone("US/Central")
-    start_datetime = tz.localize(datetime.datetime(2016, 1, 3, 8))
-    stop_datetime = tz.localize(datetime.datetime(2016, 1, 3, 8, 30))
+    today = datetime.date.today()
+    print("1", today.year, today.month, today.day)
+    today += datetime.timedelta(days=1)
+
+    print("2", today)
+    print("3", today.year, today.month, today.day)
+    # from datetime import date
+
+    # my_date = date.today()
+    # my_datetime = datetime(my_date.year, my_date.month, my_date.day)
+    # print(my_datetime)
+    # convert our date into a datetime and add the 6 PM hour to it
+    the_datetime = tz.localize(
+        datetime.datetime(today.year, today.month, today.day, 18)
+    )
+    the_datetime2 = tz.localize(
+        datetime.datetime(today.year, today.month, today.day, 19)
+    )
+    print(the_datetime, the_datetime2)
+    body = {
+        "timeMin": the_datetime.isoformat(),
+        "timeMax": the_datetime2.isoformat(),
+        "timeZone": "US/Central",
+        "items": [{"id": "hello.gloria@gmail.com"}],
+    }
+
+    eventsResult = service.freebusy().query(body=body).execute()
+    import json
+
+    print("eventsResult:", json.dumps(eventsResult))
+
+    cal_dict = eventsResult[u"calendars"]
+    for cal_name in cal_dict:
+        print(cal_name, cal_dict[cal_name])
+    if eventsResult["calendars"]["hello.gloria@gmail.com"] == "busy":
+        return "busy"
+
+
+# Add event
+def add_event(service):
+    tz = pytz.timezone("US/Central")
+    today = datetime.date.today()
+    today += datetime.timedelta(days=1)
+    start_datetime = tz.localize(
+        datetime.datetime(today.year, today.month, today.day, 18)
+    )
+    stop_datetime = tz.localize(
+        datetime.datetime(today.year, today.month, today.day, 19)
+    )
     event = {
-        "summary": "My Test Event",
-        "description": "A chance to hear more about Google's developer products.",
+        "summary": "Let's go walking",
+        "description": "An invitation from your walking buddy",
         "start": {
             "dateTime": start_datetime.isoformat(),
             "timeZone": "US/Central",
@@ -151,29 +160,21 @@ def add_event():
             "timeZone": "US/Central",
         },
         "attendees": [
-            {"email": "lpage@example.com"},
-            {"email": "sbrin@example.com"},
+            {"email": "hello.gloria@gmail.com"},
+            {"email": "treasuresoftheandes@yahoo.com"},
         ],
     }
     # inserts event in calendar
-    # event = service.events().insert(calendarId='primary', body=event).execute()
-    # print('Event created: %s' % (event.get('htmlLink')))
-
-    # 
+    event = service.events().insert(calendarId="primary", body=event).execute()
+    print("Event created: %s" % (event.get("htmlLink")))
 
 
 def main():
 
     service = check_creds()
-    next_ten_events()
-    free_or_busy_time()
-    add_event()
-
-
-
-    
-   
-    
+    # next_ten_events()
+    free_or_busy_time(service)
+    add_event(service)
 
 
 if __name__ == "__main__":
